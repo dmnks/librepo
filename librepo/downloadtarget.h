@@ -67,6 +67,9 @@ typedef struct {
     char *baseurl; /*!<
         Base URL for this target. If used, then mirrorlist will be ignored. */
 
+    char *onetimeflag; /*!<
+        See: LRO_ONETIMEFLAG */
+
     int fd; /*!<
         Opened file descriptor where data will be written or -1.
         Note: Only one, fd or fn, is set simultaneously. */

@@ -132,6 +132,7 @@ lr_handle_free(LrHandle *handle)
     lr_free(handle->mirrorlist);
     lr_free(handle->mirrorlisturl);
     lr_free(handle->metalinkurl);
+    lr_free(handle->onetimeflag);
     lr_free(handle->used_mirror);
     lr_free(handle->destdir);
     lr_free(handle->useragent);
@@ -306,6 +307,12 @@ lr_handle_setopt(LrHandle *handle,
             lr_free(handle->metalinkurl);
         handle->metalinkurl = g_strdup(va_arg(arg, char *));
         lr_handle_remote_sources_changed(handle, LR_REMOTESOURCE_METALINK);
+        break;
+
+    case LRO_ONETIMEFLAG:
+        if (handle->onetimeflag)
+            lr_free(handle->onetimeflag);
+        handle->onetimeflag = g_strdup(va_arg(arg, char *));
         break;
 
     case LRO_LOCAL:
@@ -845,7 +852,7 @@ lr_handle_prepare_mirrorlist(LrHandle *handle, gchar *localpath, GError **err)
         }
 
         url = lr_prepend_url_protocol(handle->mirrorlisturl);
-        if (!lr_yum_download_url(handle, url, fd, TRUE, FALSE, err)) {
+        if (!lr_yum_download_url(handle, url, fd, TRUE, FALSE, TRUE, err)) {
             close(fd);
             return FALSE;
         }
@@ -960,7 +967,7 @@ lr_handle_prepare_metalink(LrHandle *handle, gchar *localpath, GError **err)
         }
 
         url = lr_prepend_url_protocol(handle->metalinkurl);
-        if (!lr_yum_download_url(handle, url, fd, TRUE, FALSE, err)) {
+        if (!lr_yum_download_url(handle, url, fd, TRUE, FALSE, TRUE, err)) {
             close(fd);
             return FALSE;
         }

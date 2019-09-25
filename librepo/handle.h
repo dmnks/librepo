@@ -143,6 +143,24 @@ typedef enum {
     LRO_METALINKURL, /*!< (char *)
         Metalink url */
 
+    LRO_ONETIMEFLAG, /*!< (char *)
+        A one-time flag (OTF) is a URL query parameter (in the form
+        "key=value") that is added to the first HTTP metalink or mirrorlist
+        request made with this handle.  Any subsequent requests with this
+        handle, including any retry attempts made by librepo itself, will not
+        get this OTF.
+
+        This is useful for implementing a mechanism for counting the users of a
+        repository (and, by extension, of the OS as a whole) in which all OTF
+        instances received by the server in a specific time window are summed
+        up to produce a good estimate, with the advantage of bundling the flag
+        into regular metadata updates and not sending separate requests just
+        for that purpose alone.
+
+        For a reference implementation, see the "countme" option in dnf.conf(5)
+        or the associated Fedora change:
+        https://fedoraproject.org/wiki/Changes/DNF_Better_Counting */
+
     LRO_LOCAL,  /*!< (long 1 or 0)
         Do not duplicate local metadata, just locate the old one */
 

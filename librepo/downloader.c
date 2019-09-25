@@ -1458,6 +1458,19 @@ prepare_next_transfer(LrDownload *dd, gboolean *candidatefound, GError **err)
     }
     target->curl_handle = h;
 
+    // Append the OTF (if specified on the target), see LRO_ONETIMEFLAG for
+    // details.
+    LrDownloadTarget *dtarget = target->target;
+    if (dtarget->onetimeflag) {
+        char *sep = "?";
+        if (g_strrstr(full_url, sep) != NULL) sep = "&";
+        char *new_url = g_strjoin(sep, full_url, dtarget->onetimeflag, NULL);
+        g_free(full_url);
+        full_url = new_url;
+        // No other CURL handle on this target shall apply the flag again
+        dtarget->onetimeflag = NULL;
+    }
+
     // Set URL
     c_rc = curl_easy_setopt(h, CURLOPT_URL, full_url);
     if (c_rc != CURLE_OK) {
@@ -2768,7 +2781,7 @@ lr_download_target(LrDownloadTarget *target,
 gboolean
 lr_download_url(LrHandle *lr_handle, const char *url, int fd, GError **err)
 {
-    return lr_yum_download_url(lr_handle, url, fd, FALSE, FALSE, err);
+    return lr_yum_download_url(lr_handle, url, fd, FALSE, FALSE, FALSE, err);
 }
 
 int

@@ -551,7 +551,8 @@ lr_get_metadata_failure_callback(const LrHandle *handle)
 
 gboolean
 lr_yum_download_url(LrHandle *lr_handle, const char *url, int fd,
-                    gboolean no_cache, gboolean is_zchunk, GError **err)
+                    gboolean no_cache, gboolean is_zchunk, gboolean apply_otf,
+                    GError **err)
 {
     gboolean ret;
     LrDownloadTarget *target;
@@ -572,6 +573,12 @@ lr_yum_download_url(LrHandle *lr_handle, const char *url, int fd,
                                    NULL, 0, 0,(lr_handle->user_cb) ? progresscb : NULL, cbdata,
                                    NULL, (lr_handle->hmfcb) ? hmfcb : NULL, NULL, 0, 0,
                                    NULL, no_cache, is_zchunk);
+
+    if (apply_otf) {
+        target->onetimeflag = lr_handle->onetimeflag;
+        // No other target on this handle shall apply the flag again
+        lr_handle->onetimeflag = NULL;
+    }
 
     // Download the target
     ret = lr_download_target(target, &tmp_err);

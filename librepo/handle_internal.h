@@ -97,6 +97,9 @@ struct _LrHandle {
     LrInternalMirrorlist *mirrors;  /*!<
         Mirrors from metalink or mirrorlist */
 
+    char *onetimeflag; /*!<
+        See: LRO_ONETIMEFLAG */
+
     int local; /*!<
         Do not duplicate local data */
 
